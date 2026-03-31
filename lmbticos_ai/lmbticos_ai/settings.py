@@ -43,7 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 第三方应用
     'rest_framework',
+    'rest_framework_simplejwt',
+    # 业务应用
     'documents',
     'slice_tool',
     'models_management',
@@ -53,6 +56,8 @@ INSTALLED_APPS = [
     'kanban',
     'requirements',
     'workflows',
+    # Agent应用
+    'agents_api',
 ]
 
 MIDDLEWARE = [

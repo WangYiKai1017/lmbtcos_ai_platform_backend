@@ -56,4 +56,7 @@ urlpatterns = [
     
     # 工作流页面模块路由
     path('v1/workflows/', include('workflows.urls')),
+    
+    # Agent管理模块路由
+    path('v1/agents/', include('agents_api.urls')),
 ]
