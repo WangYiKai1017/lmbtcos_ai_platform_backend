@@ -1,0 +1,299 @@
+{
+  "metadata": {
+    "spec": "Example: Build a chat application similar to claude.ai",
+    "createdAt": "2026-04-01T20:00:00.000Z",
+    "totalFeatures": 15,
+    "version": "1.0"
+  },
+  "features": [
+    {
+      "id": "feat-001",
+      "category": "core",
+      "description": "User can see the main chat interface on load",
+      "steps": [
+        "Navigate to application URL",
+        "Verify main chat area is visible",
+        "Verify welcome message or empty state is displayed",
+        "Verify sidebar is visible (collapsed or expanded)"
+      ],
+      "passes": true,
+      "implementedBy": "coder-v2",
+      "commitHash": "a1b2c3d",
+      "evaluatedBy": "evaluator-v1",
+      "evaluationScore": 4.5,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": "2026-04-01T11:30:00.000Z"
+    },
+    {
+      "id": "feat-002",
+      "category": "core",
+      "description": "User can type a message in the input field",
+      "steps": [
+        "Click or tab to input field",
+        "Type text characters",
+        "Verify text appears in input field",
+        "Verify cursor position is correct",
+        "Verify input accepts multi-line text (Shift+Enter)"
+      ],
+      "passes": true,
+      "implementedBy": "coder-v2",
+      "commitHash": "b2c3d4e",
+      "evaluatedBy": "evaluator-v1",
+      "evaluationScore": 5.0,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": "2026-04-01T12:00:00.000Z"
+    },
+    {
+      "id": "feat-003",
+      "category": "core",
+      "description": "User can send message by pressing Enter",
+      "steps": [
+        "Type a message in input field",
+        "Press Enter key (without Shift)",
+        "Verify message appears in chat history",
+        "Verify input field is cleared after sending",
+        "Verify scroll position moves to bottom"
+      ],
+      "passes": true,
+      "implementedBy": "coder-v2",
+      "commitHash": "c3d4e5f",
+      "evaluatedBy": "evaluator-v1",
+      "evaluationScore": 4.8,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": "2026-04-01T13:00:00.000Z"
+    },
+    {
+      "id": "feat-004",
+      "category": "core",
+      "description": "User can see AI response streaming",
+      "steps": [
+        "Send a message",
+        "Verify loading indicator appears",
+        "Verify AI response streams in word-by-word or token-by-token",
+        "Verify streaming completes with full response",
+        "Verify loading indicator disappears after completion"
+      ],
+      "passes": false,
+      "implementedBy": "coder-v3",
+      "commitHash": "d4e5f6g",
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null,
+      "notes": "Streaming implemented but occasional stutter on long responses - needs optimization"
+    },
+    {
+      "id": "feat-005",
+      "category": "core",
+      "description": "User can send message by clicking Send button",
+      "steps": [
+        "Type a message in input field",
+        "Click the Send button icon",
+        "Verify message is sent (same behavior as Enter key)",
+        "Verify button has visual feedback on click",
+        "Verify button is disabled when input is empty"
+      ],
+      "passes": false,
+      "implementedBy": null,
+      "commitHash": null,
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null
+    },
+    {
+      "id": "feat-006",
+      "category": "sidebar",
+      "description": "Sidebar shows list of past conversations",
+      "steps": [
+        "Open or expand sidebar",
+        "Verify list of past conversations is displayed",
+        "Verify conversations are sorted by date (newest first)",
+        "Verify conversation titles are truncated if too long",
+        "Verify active conversation is highlighted"
+      ],
+      "passes": false,
+      "implementedBy": null,
+      "commitHash": null,
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null
+    },
+    {
+      "id": "feat-007",
+      "category": "sidebar",
+      "description": "User can click conversation to load it",
+      "steps": [
+        "Click on a past conversation in sidebar",
+        "Verify conversation loads in main chat area",
+        "Verify all messages are displayed",
+        "Verify clicked conversation is highlighted as active",
+        "Verify scroll position is at bottom (latest message)"
+      ],
+      "passes": false,
+      "implementedBy": null,
+      "commitHash": null,
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null
+    },
+    {
+      "id": "feat-008",
+      "category": "sidebar",
+      "description": "User can create new chat from sidebar",
+      "steps": [
+        "Click 'New Chat' button in sidebar",
+        "Verify current conversation is saved",
+        "Verify chat area clears to welcome state",
+        "Verify new conversation is created in backend",
+        "Verify sidebar shows new conversation at top"
+      ],
+      "passes": false,
+      "implementedBy": null,
+      "commitHash": null,
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null
+    },
+    {
+      "id": "feat-009",
+      "category": "sidebar",
+      "description": "User can rename a conversation",
+      "steps": [
+        "Right-click or hover on conversation in sidebar",
+        "Select 'Rename' option",
+        "Enter new name in input field",
+        "Press Enter or click Save",
+        "Verify conversation title updates in sidebar"
+      ],
+      "passes": false,
+      "implementedBy": null,
+      "commitHash": null,
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null
+    },
+    {
+      "id": "feat-010",
+      "category": "sidebar",
+      "description": "User can delete a conversation",
+      "steps": [
+        "Right-click or hover on conversation in sidebar",
+        "Select 'Delete' option",
+        "Verify confirmation dialog appears",
+        "Click 'Confirm' in dialog",
+        "Verify conversation is removed from sidebar",
+        "Verify chat area shows next conversation or welcome state"
+      ],
+      "passes": false,
+      "implementedBy": null,
+      "commitHash": null,
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null
+    },
+    {
+      "id": "feat-011",
+      "category": "message",
+      "description": "User messages display with correct styling",
+      "steps": [
+        "Send a message",
+        "Verify user message appears on right side",
+        "Verify user message has distinct background color",
+        "Verify timestamp is displayed",
+        "Verify message has avatar or initial"
+      ],
+      "passes": false,
+      "implementedBy": null,
+      "commitHash": null,
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null
+    },
+    {
+      "id": "feat-012",
+      "category": "message",
+      "description": "AI messages display with correct styling",
+      "steps": [
+        "Receive an AI response",
+        "Verify AI message appears on left side",
+        "Verify AI message has distinct background color",
+        "Verify timestamp is displayed",
+        "Verify AI avatar or logo is shown"
+      ],
+      "passes": false,
+      "implementedBy": null,
+      "commitHash": null,
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null
+    },
+    {
+      "id": "feat-013",
+      "category": "message",
+      "description": "User can copy message content",
+      "steps": [
+        "Hover over any message",
+        "Verify copy button appears",
+        "Click copy button",
+        "Verify content is copied to clipboard",
+        "Verify visual feedback (toast or icon change) confirms copy"
+      ],
+      "passes": false,
+      "implementedBy": null,
+      "commitHash": null,
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null
+    },
+    {
+      "id": "feat-014",
+      "category": "message",
+      "description": "User can regenerate AI response",
+      "steps": [
+        "Hover over an AI message",
+        "Verify regenerate button appears",
+        "Click regenerate button",
+        "Verify previous response is replaced",
+        "Verify new response streams in",
+        "Verify user can cycle through previous versions"
+      ],
+      "passes": false,
+      "implementedBy": null,
+      "commitHash": null,
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null
+    },
+    {
+      "id": "feat-015",
+      "category": "settings",
+      "description": "User can toggle dark/light mode",
+      "steps": [
+        "Open settings menu",
+        "Find theme/appearance toggle",
+        "Click to switch to dark mode",
+        "Verify entire UI switches to dark colors",
+        "Click to switch to light mode",
+        "Verify entire UI switches to light colors",
+        "Verify preference persists across page reload"
+      ],
+      "passes": false,
+      "implementedBy": null,
+      "commitHash": null,
+      "evaluatedBy": null,
+      "evaluationScore": null,
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "completedAt": null
+    }
+  ]
+}
