@@ -139,7 +139,7 @@ class AgentScheduler:
             return len(self.agents)
     
     def __str__(self):
-        return f"AgentScheduler(running_agents={self.count_agents()})
+        return f"AgentScheduler(running_agents={self.count_agents()})"
 
 
 # 创建全局调度器实例
