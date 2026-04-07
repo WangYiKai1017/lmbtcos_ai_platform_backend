@@ -29,6 +29,7 @@ class ConversationState(TypedDict):
     requirements: list  # 已提取的需求点列表
     open_questions: list  # 待确认的问题列表
     is_completed: bool  # 是否完成对话
+    conversation_summary: str  # 当前对话总结沉淀
 
 
 class RequirementPoint(BaseModel):
@@ -114,9 +115,21 @@ class ConversationGuide:
             formatted = self.prompt.format_messages(messages=state["messages"])
             llm_with_tools = self.llm.bind_tools(self.tools)
             response = await llm_with_tools.ainvoke(formatted)
+            
+            # 生成当前对话总结
+            summary_prompt = ChatPromptTemplate.from_messages([
+                ("system", "请总结以下对话的核心内容，包括已获取的需求要点、缺失的信息和下一步的引导方向。\n\n对话历史："),
+                MessagesPlaceholder(variable_name="messages"),
+            ])
+            
+            summary_response = await self.llm.ainvoke(
+                summary_prompt.format_messages(messages=state["messages"] + [response])
+            )
+            
             return {
                 "messages": [response],
-                "turn_count": state["turn_count"] + 1
+                "turn_count": state["turn_count"] + 1,
+                "conversation_summary": summary_response.content
             }
         
         def should_continue(state: ConversationState):
@@ -125,24 +138,18 @@ class ConversationGuide:
             """
             last_message = state["messages"][-1]
             
-            # 如果LLM没有工具调用，检查是否应该结束对话
-            if not hasattr(last_message, "tool_calls") or not last_message.tool_calls:
-                # 检查对话轮数是否足够
-                if state["turn_count"] >= 20:
+            # 检查用户是否明确表示结束
+            if isinstance(state["messages"][-2], HumanMessage):
+                user_input = state["messages"][-2].content.lower()
+                if any(phrase in user_input for phrase in ["结束", "完成", "退出"]):
                     return "complete"
-                    
-                # 检查用户是否表示结束
-                if isinstance(state["messages"][-2], HumanMessage):
-                    user_input = state["messages"][-2].content.lower()
-                    if any(phrase in user_input for phrase in ["够了", "结束", "完成", "可以了", "就这些"]):
-                        return "complete"
             
-            # 继续对话
+            # 继续对话（移除了轮数限制，由Agent自行判断）
             return "agent"
         
         async def complete_conversation(state: ConversationState):
             """
-            完成对话，总结需求
+            完成对话，总结需求并准备传递给需求分析师
             """
             # 使用预加载的总结提示模板
             summary_prompt = ChatPromptTemplate.from_messages([
@@ -155,11 +162,12 @@ class ConversationGuide:
                 summary_prompt.format_messages(messages=state["messages"])
             )
             
-            # 更新状态
+            # 标记为已完成并准备传递给需求分析师
             return {
                 "requirements": summary_response.get("requirements", []),
                 "open_questions": summary_response.get("open_questions", []),
-                "is_completed": True
+                "is_completed": True,
+                "conversation_summary": state.get("conversation_summary", "")
             }
         
         # 构建图
