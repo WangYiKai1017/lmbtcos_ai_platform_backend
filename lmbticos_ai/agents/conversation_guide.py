@@ -5,13 +5,18 @@
 
 from typing import Annotated, Sequence, TypedDict, Optional
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
 from pydantic import BaseModel
+from langchain_community.chat_models import ChatOpenAI
 import json
 import datetime
+import os
+from dotenv import load_dotenv
+
+# 加载环境变量
+load_dotenv()
 
 
 class ConversationState(TypedDict):
@@ -57,45 +62,23 @@ class ConversationGuide:
         """
         初始化对话引导者
         """
+        # 从环境变量获取大模型配置
+        qwen_url = os.getenv("QWEN_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+        qwen_apikey = os.getenv("QWEN_APIKEY", "")
+        
         self.llm = llm or ChatOpenAI(
-            model="gpt-4-turbo-preview",
+            base_url=qwen_url,
+            api_key=qwen_apikey,
+            model="qwen-turbo",  # 使用通义千问模型
             temperature=0.7
         )
         
         # 创建工具
         self.tools = []
         
-        # 创建提示模板
-        self.system_prompt = """
-你是一名专业的需求挖掘专家，你的任务是通过多轮对话深入了解用户的需求。
-
-## 核心职责：
-1. 与用户进行友好、专业的对话，引导用户清晰地表达需求
-2. 系统性地挖掘需求，确保覆盖5W1H（What, Who, When, Where, Why, How）
-3. 识别用户需求中的模糊点，提出澄清问题
-4. 总结并确认已达成共识的需求
-5. 当需求足够清晰时，结束对话并输出结构化的需求清单
-
-## 工作流程：
-1. 首先，你需要向用户打招呼并询问基本需求
-2. 然后，通过提问深入了解需求的细节
-3. 持续追问直到你认为需求已经足够清晰
-4. 最后，总结所有需求并确认用户是否满意
-
-## 注意事项：
-- 每次只问一个问题，避免信息过载
-- 使用通俗易懂的语言，避免专业术语
-- 对于复杂需求，引导用户分点描述
-- 确认用户的优先级和约束条件
-- 记录所有已达成共识的需求点
-
-## 对话结束条件：
-- 用户明确表示需求已经说完
-- 你已经获取了足够清晰的需求（至少5轮对话）
-- 需求覆盖率达到80%以上
-
-请开始与用户的对话，首先询问用户的基本需求。
-        """
+        # 从文件加载提示模板
+        self.system_prompt = self._load_prompt("conversation_guide_prompt.md")
+        self.summary_prompt = self._load_prompt("requirement_summary_prompt.md")
         
         self.prompt = ChatPromptTemplate.from_messages([
             ("system", self.system_prompt),
@@ -104,6 +87,19 @@ class ConversationGuide:
         
         # 创建LangGraph工作流
         self.workflow = self._build_workflow()
+    
+    def _load_prompt(self, prompt_file: str) -> str:
+        """
+        从文件加载prompt
+        """
+        prompt_path = os.path.join(
+            os.path.dirname(__file__),
+            "prompts",
+            prompt_file
+        )
+        
+        with open(prompt_path, "r", encoding="utf-8") as f:
+            return f.read()
     
     def _build_workflow(self):
         """
@@ -148,11 +144,10 @@ class ConversationGuide:
             """
             完成对话，总结需求
             """
-            # 总结需求的提示
+            # 使用预加载的总结提示模板
             summary_prompt = ChatPromptTemplate.from_messages([
-                ("system", "你是一名专业的需求分析师，请总结以下对话中的所有需求点，形成结构化的需求清单。\n\n对话历史："),
+                ("system", self.summary_prompt.format(conversation_history="")),
                 MessagesPlaceholder(variable_name="messages"),
-                ("system", "\n\n请输出JSON格式的需求清单，包含以下字段：\n- requirements: 需求点列表，每个需求点包含id、content、category、priority、description\n- open_questions: 待确认问题列表，每个问题包含id、question、asked_at\n- session_id: 会话ID\n- total_turns: 对话总轮数\n- completed_at: 完成时间"),
             ])
             
             structured_llm = self.llm.with_structured_output(dict)
